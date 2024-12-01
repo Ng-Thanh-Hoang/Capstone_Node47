@@ -51,6 +51,7 @@ model nguoi_dung {
   ho_ten        String?     @db.VarChar(255)
   tuoi          Int?
   anh_dai_dien  String?     @db.VarChar(255)
+  refeshToken   String?     @db.VarChar(255)
   binh_luan     binh_luan[]
   hinh_anh      hinh_anh[]
   luu_anh       luu_anh[]

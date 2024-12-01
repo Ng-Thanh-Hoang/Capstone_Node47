@@ -137,6 +137,46 @@ const checkImgExistById = async (req, res) => {
     });
 };
 
+const addImage = async (req, res) => {
+    const { ten_hinh, duong_dan, mo_ta, nguoi_dung_id } = req.body;
+
+    //Kiểm tra xem các thông tin cần thiết có đầy đủ không
+    if (!ten_hinh || !duong_dan || !nguoi_dung_id) {
+        return res.status(400).json({ message: "Please provide all required fields (ten_hinh, duong_dan, nguoi_dung_id)" });
+    }
+
+    let user = await prisma.nguoi_dung.findUnique({
+        where: { nguoi_dung_id: nguoi_dung_id },
+    });
+
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    const newImage = await prisma.hinh_anh.create({
+        data: {
+            ten_hinh,
+            duong_dan,
+            mo_ta,
+            nguoi_dung_id,
+        },
+    });
+
+    const saveImage = await prisma.luu_anh.create({
+        data: {
+            nguoi_dung_id,
+            hinh_id: newImage.hinh_id,
+            ngay_luu: new Date()
+        },
+    });
+
+    return res.status(201).json({
+        message: "Image added successfully",
+        image: newImage
+    });
+};
+
+
 
 export {
     getImg,
@@ -144,5 +184,6 @@ export {
     getImgById,
     getListImgByUserId,
     deleteImgById,
-    checkImgExistById
+    checkImgExistById,
+    addImage
 }

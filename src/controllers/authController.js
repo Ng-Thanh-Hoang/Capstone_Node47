@@ -56,22 +56,29 @@ const login = async (req, res) => {
     })
 
     if (!checkUser) {
-        res.status(400).json({ message: "Email is wrong" })
+        return res.status(400).json({ message: "Email is wrong" })
     }
 
     let checkPass = bcrypt.compareSync(mat_khau, checkUser.mat_khau);
 
     if (!checkPass) {
-        res.status(400).json({ message: "Password is wrong" })
+        return res.status(400).json({ message: "Password is wrong" })
     }
 
     let payload = {
-        nguoi_dung_id: checkUser.nguoi_dung_id
+        userId: checkUser.nguoi_dung_id
     }
 
     let accessToken = createToken(payload);
 
     let refreshToken = createToken(payload);
+
+    await prisma.nguoi_dung.update({
+        where: { nguoi_dung_id: checkUser.nguoi_dung_id },
+        data: {
+            refeshToken: refreshToken
+        }
+    });
 
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
@@ -82,6 +89,7 @@ const login = async (req, res) => {
 
     return res.status(200).json({ message: "Login successfully", token: accessToken });
 }
+
 
 export {
     signUp,

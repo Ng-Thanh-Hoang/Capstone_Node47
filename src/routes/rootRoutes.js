@@ -11,5 +11,4 @@ rootRoutes.use('/img',imgRoutes)
 rootRoutes.use('/com',comRoutes)
 rootRoutes.use('/user',userRoutes)
 
-
 export default rootRoutes
